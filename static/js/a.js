@@ -23,7 +23,7 @@ $(document).ready(function(){
       $.post("/post/", {lat:plat, long:plong}, function(result){
         document.write(result);
       }); 
-    }, 1);
+    }, 100);
 
     
 });
