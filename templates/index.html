@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Front Page</title>
+     <!--link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/leaflet.css') }}"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}"> 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=open+Sans"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> 
+    <script src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+<body onload="gMap">   
+    <!--sets up divs side by side-->
+        <div class="container-fluid">
+            <div class="page-header">
+                <div class="row text-center">
+                    <div class="col-xs-4">
+                        <h1>Mortality Route</h1>
+                    </div>
+                    <div class="col-xs-8">
+                        <h2>How safe are the roads you travel on?</h2>
+                    </div>
+                </div>  
+            </div>
+        </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="text-center">
+                <div class="row">
+                    <h3>
+                        Ever wondered how safe the roads are where you live?
+                        Or if there is a safer way to work?
+                    </h3>
+                    <p>
+                        Begin your search by entering a town, city or postcode in the text box below.
+                    <br />
+                        Then click the magnifying glass to return your result
+                    </p>
+                </div>
+                <form>
+                    <div class="row">
+                        <div class="col-xs-offset-2 col-xs-2 text-right">
+                            <button class="btn btn-default" id="submit" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                        </div>
+                        <div class="col-xs-6">
+                            <input class="hfill" id="address" type="text" placeholder="Enter a postcode/City or Town">
+                        </div>
+                    </div>
+                </form>
+                <div class="row">
+                    <article id="Location" class="w3-container w3-border" style="margin-left:10%; margin-top:3%; margin-right:50%; width: 400px; height: 400px";></article>
+                </div>
+            </div>
+        </div>
+            <div class="col-sm-6">
+                <div id="map" style="width:700px;height:100%" ></div>
+            </div>
+    </div>
+    <!--displays Map in sidebar, centering on Edinburgh
+        entering city name/town/postcode in box displays message of lat & long coords and then displays location on map with marker.
+        Stores these values in two variables:
+        lat for lattitude
+        long for longitude. Should be enough for you to use Scott?-->
+    <script>
+    function gMap() {
+        var map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 12,
+            center: { lat: 55.953251, lng: -3.188267 }
+        });
+
+        var marker = new google.maps.Marker({ position: { lat: 55.953251, lng: -3.188267 } });
+        marker.setMap(map);
+
+        var geocoder = new google.maps.Geocoder();
+
+        document.getElementById("submit").addEventListener('click', function () {
+            geocodeAddress(geocoder, map);
+        });
+    }
+
+        function geocodeAddress(geocoder, resultsMap)
+        {
+            var lat, long;
+        var address = document.getElementById('address').value;
+        geocoder.geocode({ 'address': address }, function (results, status)
+        {
+            if (status === 'OK')
+            {
+                resultsMap.setCenter(results[0].geometry.location);
+                var marker = new google.maps.Marker(
+                {
+                    map: resultsMap,
+                    position: results[0].geometry.location
+                });
+            } else
+            {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+            if (status == google.maps.GeocoderStatus.OK)
+            {
+                lat = results[0].geometry.location.lat();
+                long = results[0].geometry.location.lng();
+                setTimeout(function(){
+                  $.post("/post/", {lat:lat, long:long}, function(result){
+                  });
+                },100);
+            }
+            else
+            {
+                alert("Something gone wrong " + status);
+            }
+        });
+    }
+    </script>
+    <!--website source to use API key-->
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5Q81ZHGTOGkdygR1QadM1xoX91CDJChM&callback=gMap"></script>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="text-center">Designed by Team Mortality Route Copyright &copy;</p>
+        </div>
+    </footer>
+</body>
+</html>

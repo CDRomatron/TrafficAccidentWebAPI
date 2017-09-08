@@ -1,0 +1,55 @@
+html {
+	position: relative;
+	min-height: 100%;
+}
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	background: url("Road.jpg") no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+.container-fluid {
+	width: 100%;
+	padding: 0;
+}
+
+.hfill { min-width: 100%; }
+
+#map {
+	width: 90%;
+	min-height: 70vh;
+	max-height: 75vh;
+	border: 1px solid #fff;
+}
+
+h3, p { margin-bottom: 1em; }
+
+p, h1, h2, h3 { text-shadow: 1px 1px 1px #444; }
+
+.page-header {
+	background-color: #fff;
+	box-shadow: 0px 2px 2px #000;
+	margin-top: 0;
+	margin-left: 0;
+	margin-right: 0;
+	margin-bottom: 40px;
+	text-shadow: unset;
+}
+
+.text-center { margin: 0; }
+
+.footer {
+	background-color: #fff;
+	box-shadow: 0px -2px 2px #000;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	/* Set the fixed height of the footer here */
+	height: 50px;
+}
+
+.footer p { margin-top: 10px; }

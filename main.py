@@ -36,7 +36,7 @@ def pop_db():
 
 @app.route("/")
 def test():
-  return render_template('a.html')
+  return render_template('index.html')
 
 @app.route("/post/", methods=['POST'])
 def post():
