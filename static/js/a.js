@@ -20,7 +20,7 @@ $(document).ready(function(){
     getLocation();
 
     setTimeout(function(){
-      $.post("/post/", {lat:plat, long:plong}, function(result){
+      $.post("/post/", {lat:51.506739, long:0.194671}, function(result){
         document.write(result);
       }); 
     }, 100);

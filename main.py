@@ -1,7 +1,38 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, g
 import json
 import math
+import sqlite3
+import csv
 app = Flask(__name__)
+db_location = 'var/accident.db'
+
+def get_db():
+  db = getattr(g, 'db', None)
+  if db is None:
+    db = sqlite3.connect(db_location)
+    g.db = db
+  return db
+
+def init_db():
+  with app.app_context():
+    db = get_db()
+    with app.open_resource('schema.sql', mode='r') as f:
+      db.cursor().executescript(f.read())
+    db.commit()
+
+def pop_db():
+  with app.app_context():
+    db = get_db()
+    with app.open_resource('var/Accidents_2015.csv', mode='r') as f:
+      reader = csv.reader(f)
+      data = next(reader)
+      query = 'INSERT INTO accidents VALUES ({0})'
+      query = query.format(','.join('?' * len(data)))
+      cursor = db.cursor()
+      cursor.execute(query, data)
+      for data in reader:
+        cursor.execute(query, data)
+      db.commit()
 
 @app.route("/")
 def test():
@@ -24,7 +55,18 @@ def post():
   print(str(northLimit))
   print(str(southLimit))
 
-  return 'lat: ' + str(lat) + ' long: ' + str(long)
+  db = get_db()
+
+  sql = "SELECT * FROM accidents WHERE (Latitude <= " + str(northLimit[0]) + " AND Latitude >= " + str(southLimit[0]) + ") AND (Longitude <= " + str(eastLimit[1]) + " AND Longitude >= " + str(westLimit[1]) + ")"
+  print sql
+
+  data = []
+
+  for row in db.cursor().execute(sql):
+    print str(row)
+    data.append(row)
+
+  return jsonify(data = data)
 
 def calcNewLat(oldLat, oldLong, b):
   earthR = 6378.1
